@@ -133,26 +133,26 @@ medes(ej)
 
 ## 2
 
-prod_intern <- function (v1,v2) {
+prod_intern_cos <- function (v1,v2) {
 	if (length(v1) == length(v2)) {
 	res <- 0
 	for(i in 1:length(v1)) {
 		mult <- v1[i] * v2[i]
 		res <- res + mult
 	}
-	return (res)
+	return (cos(res))
 	} else {
 		warning ("Error: Los vectores han de tener mismas dimensiones ")
 	}
 }
 v1 <- c(4,3,4)
 v2 <- c(3,4,4)
-prod_intern(v1,v2)
+prod_intern_cos(v1,v2)
 
 
 v1 <- c(2,3)
 v2 <- c(3,4,5)
-prod_intern(v1,v2)
+prod_intern_cos(v1,v2)
 
 ## 3
 
