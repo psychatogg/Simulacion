@@ -9,7 +9,7 @@
 library(psych)
 
 ## 2
-ej <- read.csv("ejemplo.csv", sep=";")
+ej <- read.csv("E:/GDrive1/Uni/Master/Simulacion/Ejercicios/Introducción/ejemplo.csv", sep=";")
 
 ## 3
 mean(ej$X)
@@ -25,8 +25,9 @@ ej <- cbind(ej,sqrt_x)
 ## 11.2
 ## 1
 suma1 <- function(a,b) {
-	return(sum(a,b))
+	return(a+b)
 }
+suma1(4,9)
 
 ## 2
 suma3 <- function(x1,x2,x3) {
@@ -46,8 +47,8 @@ suma3 <- function(x1,x2,x3) {
 	s <- sum(x1,x2,x3)
 	return(s)
 }
-
-
+suma3(2,3)
+suma3(7,3,1)
 
 ## 11.3
 
@@ -56,7 +57,7 @@ suma_10 <- 0
 for(i in 1:10) {
 	suma_10 <- suma_10 + i 
 }
-
+suma_10
 
 ## 2
 v <- c(0,0,0,0,0)
@@ -66,6 +67,7 @@ for(i in 1:length(v)){
 		v[i] <- 1
 	}
 }
+v
 
 ## 3
 
@@ -112,3 +114,64 @@ crea_aj <- function (d1,d2) {
 crea_aj(4,4)
 
 crea_aj(5,3)
+
+
+## 11.4
+
+## 1
+
+medes <- function (df) {
+	for(i in 1:ncol(df)) {
+		print(mean(df[,i]))
+		print(sd(df[,i]))
+	}
+}
+
+
+ej <- read.csv("E:/GDrive1/Uni/Master/Simulacion/Ejercicios/Introducción/ejemplo.csv", sep=";")
+medes(ej)
+
+## 2
+
+prod_intern <- function (v1,v2) {
+	if (length(v1) == length(v2)) {
+	res <- 0
+	for(i in 1:length(v1)) {
+		mult <- v1[i] * v2[i]
+		res <- res + mult
+	}
+	return (res)
+	} else {
+		warning ("Error: Los vectores han de tener mismas dimensiones ")
+	}
+}
+v1 <- c(4,3,4)
+v2 <- c(3,4,4)
+prod_intern(v1,v2)
+
+
+v1 <- c(2,3)
+v2 <- c(3,4,5)
+prod_intern(v1,v2)
+
+## 3
+
+df_medes <- function(df) {
+	df_res <- data.frame(Variable = names(df))
+	m_conj <- c()
+	desv_conj <- c()
+	for(i in 1:ncol(df)) {
+		m <- mean(df[,i])
+		desv <- sd(df[,i])
+		m_conj <- append(m_conj,m)
+		desv_conj <- append(desv_conj,desv)
+	}
+	df_res <- cbind(df_res,m_conj)
+	df_res <- cbind(df_res,desv_conj)
+	return(df_res)
+}
+	
+ej <- read.csv("E:/GDrive1/Uni/Master/Simulacion/Ejercicios/Introducción/ejemplo.csv", sep=";")
+df_medes(ej)
+
+
