@@ -13,7 +13,7 @@ set.seed(1)
 
 ## 1 
 x <- seq(-10, 10, .1)
-un_generador <- runif (10000,-10,10)
+un_generador <- runif (1000000,-10,10)
 
 
 uniform <- function (x) {
@@ -50,7 +50,9 @@ lines(t_eq~x, col="green")
 
 
 ## 5
-dbinom(1,5,(1/6))
+x <- vector()
+for(n in 1:4000) x[n] <- mean(rbinom(n,5,1/6))
+plot(x, type="l", xlab="número de repeticiones (n)", xlim = c(3000,4000))
 
 
 
