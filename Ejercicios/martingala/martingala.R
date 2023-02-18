@@ -81,7 +81,7 @@ for(i in 1:39){
 	## ICs
 	errmax <- 1.95*(sd(sim)/sqrt(1000))
 	errmax_vec <- append(errmax_vec,errmax)
-	## probabilidades
+	## bolsa
 	bolsa_vec <- append(bolsa_vec,sumbolsa)
 	sumbolsa <- sumbolsa + 5
 }
@@ -111,7 +111,7 @@ for(i in 1:46){
 	## ICs
 	errmax <- 1.95*(sd(sim)/sqrt(1000))
 	errmax_vec <- append(errmax_vec,errmax)
-	## probabilidades
+	## limites
 	limit_vec <- append(limit_vec,sumlimit)
 	sumlimit <- sumlimit + 10
 }
