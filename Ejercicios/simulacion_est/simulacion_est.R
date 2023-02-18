@@ -31,14 +31,14 @@ lines(un_eq~x, col="green")
 
 ## 2
 x <- seq(-10, 10, .1)
-t_generador <- rt (10000,40)
+t_generador <- rt (10000,99)
 
 
 t <- function(x, df){
 	n = ((gamma((df+1)/2))/(sqrt(df*pi)*gamma(df/2))) * (1+(x^2)/df)^((-df+1)/2)
 }
 
-t_eq <- t(x,40)
+t_eq <- t(x,99)
 
 d <- density(t_generador) 
 plot(d) # plot d
