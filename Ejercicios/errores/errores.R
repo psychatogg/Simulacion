@@ -251,7 +251,7 @@ sprintf("Sd teoría: %.2f -- Sd empírica : %.2f", sd.teo, sd.emp)
 set.seed(1)
 
 N=1000 # tamano de la poblacion
-n = 250 # tamano de las muestras
+n = 25 # tamano de las muestras
 k = 25000
 
 
@@ -276,7 +276,7 @@ hist(vars)
 
 # Afirmaciones teoricas
 
-varvar_t <- 2*(n-1)
+
 
 
 
@@ -290,13 +290,29 @@ for (i in 1:k){
 	vars_ses[i] <- var_ses(muestra,n)
 }
 
-muvar_t <- ((n-1)/n)*(sd.pob)^2
+muvar_t <- ((n-1)/n)*var(poblacion)
 print(muvar_t)
 mean(vars_ses)
 
 ## muvarins. R da por defecto la insesgada.
-muvarins_t <- (sd.pob)^2
+muvarins_t <- var(poblacion)
 print(muvarins_t)
 mean(vars)
 
+## varvar
+var2 <- function(x,n){
+	(n*var(x))/var(poblacion)
+}
+vars2 <- vector(length = k)
+for (i in 1:k){
+	muestra <- sample(poblacion, n)
+	vars2[i] <- var2(muestra,n)
+}
+var(vars2)
+varvar_t <- 2*(n-1)
+print(varvar_t)
 
+## Dstr varvar
+dstr_t <- rchisq(25000,24)
+plot(density(dstr_t))
+lines(density(vars2),col= "green")
