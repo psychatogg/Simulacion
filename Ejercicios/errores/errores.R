@@ -81,10 +81,10 @@ N=1000 # tamano de la poblacion
 n = 25 # tamano de las muestras
 k = 25000
 
-# creamos una poblacion de N numeros aleatorios con media 5 y sd =2
+
 poblacion <- runif(N, 0, 1)
 
-# comprobamos media y sd porque al ser aleatorios no tienen que ser exactamente 5 y 2
+
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
 
@@ -127,10 +127,10 @@ N=1000 # tamano de la poblacion
 n = 25 # tamano de las muestras
 k = 25000
 
-# creamos una poblacion de N numeros aleatorios con media 5 y sd =2
+
 poblacion <- rchisq(N, 3)
 
-# comprobamos media y sd porque al ser aleatorios no tienen que ser exactamente 5 y 2
+
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
 
@@ -170,10 +170,10 @@ N=1000 # tamano de la poblacion
 n = 5 # tamano de las muestras
 k = 25
 
-# creamos una poblacion de N numeros aleatorios con media 5 y sd =2
+
 poblacion <- rbinom(N, 1, 0.3)
 
-# comprobamos media y sd porque al ser aleatorios no tienen que ser exactamente 5 y 2
+
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
 
@@ -212,10 +212,10 @@ N=1000 # tamano de la poblacion
 n = 25 # tamano de las muestras
 k = 25
 
-# creamos una poblacion de N numeros aleatorios con media 5 y sd =2
+
 poblacion <- rbinom(N, 1, 0.3)
 
-# comprobamos media y sd porque al ser aleatorios no tienen que ser exactamente 5 y 2
+
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
 
@@ -246,17 +246,57 @@ sprintf("Media teoría: %.2f -- Media empírica : %.2f", m.teo, m.emp)
 sprintf("Sd teoría: %.2f -- Sd empírica : %.2f", sd.teo, sd.emp)
 
 
+## 5
+
+set.seed(1)
+
+N=1000 # tamano de la poblacion
+n = 250 # tamano de las muestras
+k = 25000
+
+
+poblacion <- rnorm(N, 5, 2)
+
+# comprobamos media y sd porque al ser aleatorios no tienen que ser exactamente 5 y 2
+mu.pob <- mean(poblacion)
+sd.pob <- sd(poblacion)
+
+# extraigo k muestras
+# no es el codigo mas eficiente pero al menos reservo la memoria al principio
+vars <- vector(length=k)
+
+for (i in 1:k){
+	muestra <- sample(poblacion, n)
+	vars[i] <- var(muestra)
+}
+
+# dibujamos esa distribucion de varianzas
+hist(vars)
+
+
+# Afirmaciones teoricas
+
+varvar_t <- 2*(n-1)
 
 
 
+## muvar
+var_ses <- function(x,n){
+	sum((x - mean(x))^2)/n
+}
+vars_ses <- vector(length = k)
+for (i in 1:k){
+	muestra <- sample(poblacion, n)
+	vars_ses[i] <- var_ses(muestra,n)
+}
 
+muvar_t <- ((n-1)/n)*(sd.pob)^2
+print(muvar_t)
+mean(vars_ses)
 
-
-
-
-
-
-
-
+## muvarins. R da por defecto la insesgada.
+muvarins_t <- (sd.pob)^2
+print(muvarins_t)
+mean(vars)
 
 
