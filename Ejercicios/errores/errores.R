@@ -274,9 +274,9 @@ for (i in 1:k){
 hist(vars)
 
 
+
+
 # Afirmaciones teoricas
-
-
 
 
 
@@ -316,3 +316,29 @@ print(varvar_t)
 dstr_t <- rchisq(25000,24)
 plot(density(dstr_t))
 lines(density(vars2),col= "green")
+
+
+## 6
+set.seed(1)
+
+N=1000 # tamano de la poblacion
+n = 25 # tamano de las muestras
+k = 25000
+poblacion <- rnorm(N, 5, 2)
+medpob <- mean(poblacion)
+li <- medpob -2.58*(sd(poblacion)/sqrt(n))
+ls <- medpob +2.58*(sd(poblacion)/sqrt(n)) 
+
+med_muestras <- vector(length = 1000)
+med_muestras_IC <- c()
+for (i in 1:1000) {
+	muestra <- sample(poblacion,n)
+	med_muestras[i] <- mean(muestra)
+	if(li<= med_muestras[i] && med_muestras[i] <= ls) {
+		med_muestras_IC[i] <- med_muestras[i]
+	}
+	
+}
+med_muestras_IC <- na.omit(med_muestras_IC)
+length(med_muestras_IC)/length(med_muestras)
+
