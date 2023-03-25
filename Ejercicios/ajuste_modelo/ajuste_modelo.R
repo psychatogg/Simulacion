@@ -9,6 +9,8 @@ data_test$horsepower <- as.integer(data_test$horsepower)
 miFit <- function(data,dependiente) {
 	formulas <- list()
 	modelos <- list()
+	formulas_int <- list()
+	modelos_int <- list()
 	preds <- names(data[,-1])
 	comb_preds <- list()
 	
@@ -22,6 +24,8 @@ miFit <- function(data,dependiente) {
 	for (i in 1: length(comb_preds)) {
 		formulas[[i]] <- vector("list", ncol(comb_preds[[i]]))
 		modelos[[i]] <- vector("list", ncol(comb_preds[[i]]))
+		formulas_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
+		modelos_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
 	}
 	## Genera Lms con todas las combos de predictores
 		for (i in 1: length(comb_preds)) { 
@@ -30,7 +34,20 @@ miFit <- function(data,dependiente) {
 				modelos[[i]][[j]] <- lm(formulas[[i]][[j]], data)
 			}
 		}
-	return(modelos)
+	## Genera Lms de todas las combos con todas las interacciones
+	for (i in 1: length(comb_preds)) { 
+		for (j in 1:ncol(comb_preds[[i]])) { 
+			formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
+																							paste(comb_preds[[i]][,j], collapse = " + "),
+																							"^2"
+																							)) 
+																				
+																				
+			modelos_int[[i]][[j]] <- lm(formulas_int[[i]][[j]], data)
+		}
+	}
+	
+	return(modelos_int)
 }
 
 miFit(data_train,"mpg")
