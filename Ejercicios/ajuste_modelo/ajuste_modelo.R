@@ -2,8 +2,9 @@
 rm(list=ls())
 load("E:\\GDrive1\\Uni\\Master\\simulacion\\ejercicios\\ajuste_modelo\\auto-mpg.Rda")
 
-
-
+## Codificación
+data_train$horsepower <- as.integer(data_train$horsepower)
+data_test$horsepower <- as.integer(data_test$horsepower)
 
 miFit <- function(data,dependiente) {
 	formulas <- list()
@@ -15,15 +16,20 @@ miFit <- function(data,dependiente) {
 	for(i in 1:5) {
 		comb_preds[[i]] <- combn(preds,i)
 	}
+	
+	
+	## Inicializa las listas
+	for (i in 1: length(comb_preds)) {
+		formulas[[i]] <- vector("list", ncol(comb_preds[[i]]))
+		modelos[[i]] <- vector("list", ncol(comb_preds[[i]]))
+	}
 	## Genera Lms con todas las combos de predictores
-	for (k in 1:218) { ## 218 es la suma de todas las combinaciones de 1 a 5
-		for (i in 1: length(comb_preds)) {
-			for (j in 1:length(comb_preds[[i]])) {
-				formulas[[k]] <- formula(paste(dependiente, paste(comb_preds[[i]][j], collapse = " + "), sep = " ~ "))
-				modelos[[k]] <- lm(formulas[[k]], data)
+		for (i in 1: length(comb_preds)) { 
+			for (j in 1:ncol(comb_preds[[i]])) { 
+				formulas[[i]][[j]] <- formula(paste(dependiente, paste(comb_preds[[i]][,j], collapse = " + "), sep = " ~ "))
+				modelos[[i]][[j]] <- lm(formulas[[i]][[j]], data)
 			}
 		}
-	}
 	return(modelos)
 }
 
