@@ -15,11 +15,14 @@ miFit <- function(data,dependiente) {
 	for(i in 1:5) {
 		comb_preds[[i]] <- combn(preds,i)
 	}
-	## Genera Lms con todas las combos de 1
-	comb_preds1 <- comb_preds[[1]]
-	for (i in 1:length(comb_preds1)) {
-		formulas[[i]] <- formula(paste(dependiente, paste(comb_preds1[i], collapse = " + "), sep = " ~ "))
-		modelos[[i]] <- lm(formulas[[i]], data)
+	## Genera Lms con todas las combos de predictores
+	for (k in 1:218) { ## 218 es la suma de todas las combinaciones de 1 a 5
+		for (i in 1: length(comb_preds)) {
+			for (j in 1:length(comb_preds[[i]])) {
+				formulas[[k]] <- formula(paste(dependiente, paste(comb_preds[[i]][j], collapse = " + "), sep = " ~ "))
+				modelos[[k]] <- lm(formulas[[k]], data)
+			}
+		}
 	}
 	return(modelos)
 }
@@ -61,5 +64,3 @@ for(i in 1:5) {
 
 
 
-prueba <- lm(data_test$mpg~data_test$cylinders)
-p.sum <- summary(prueba)
