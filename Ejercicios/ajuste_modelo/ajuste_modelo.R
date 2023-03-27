@@ -35,18 +35,14 @@ miFit <- function(data,dependiente) {
 			}
 		}
 	## Genera Lms de todas las combos con todas las interacciones
-	for (i in 1: length(comb_preds)) { 
+	for (i in 1:length(comb_preds)) { 
 		for (j in 1:ncol(comb_preds[[i]])) { 
 			formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
-																							paste(comb_preds[[i]][,j], collapse = " + "),
-																							paste0(sep="^4")))
-																				
-																				
+																							paste(paste0("(", paste(comb_preds[[i]][,j], collapse=" + "), ")", sep=""), " ^ 5")))
 			modelos_int[[i]][[j]] <- lm(formulas_int[[i]][[j]], data)
 		}
 	}
-	
-	return(modelos_int)
+	return(modelos[[2]][[1]])
 }
 
 miFit(data_train,"mpg")
@@ -71,43 +67,43 @@ miFit <- function(data,dependiente) {
 	}
 	return(modelos)
 }
-##################################
+#############FUERA DE FUNCIÓN###############
 
 formulas <- list()
 modelos <- list()
 formulas_int <- list()
 modelos_int <- list()
-preds <- names(data_train[,2:7]) ## Obviamos el nombre del coche por colinealidad
+preds <- names(data_train[,2:7]) 
 comb_preds <- list()
 dependiente<-"mpg"
-## Genera todas las combinaciones de 1 a 5 predictores
+
 for(i in 1:5) {
 	comb_preds[[i]] <- combn(preds,i)
 }
 
 
-## Inicializa las listas
+
 for (i in 1: length(comb_preds)) {
 	formulas[[i]] <- vector("list", ncol(comb_preds[[i]]))
 	modelos[[i]] <- vector("list", ncol(comb_preds[[i]]))
 	formulas_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
 	modelos_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
 }
-## Genera Lms con todas las combos de predictores
+
 for (i in 1: length(comb_preds)) { 
 	for (j in 1:ncol(comb_preds[[i]])) { 
 		formulas[[i]][[j]] <- formula(paste(dependiente, paste(comb_preds[[i]][,j], collapse = " + "), sep = " ~ "))
 		modelos[[i]][[j]] <- lm(formulas[[i]][[j]], data_train)
 	}
 }
-## Genera Lms de todas las combos con todas las interacciones
-for (i in 1: length(comb_preds)) { 
+
+for (i in 1:length(comb_preds)) { 
 	for (j in 1:ncol(comb_preds[[i]])) { 
 		formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
-																						paste(comb_preds[[i]][,j], collapse = " + "),
-																						paste0(sep="^4")))
-		
-		
+																						paste(paste0("(", paste(comb_preds[[i]][,j], collapse=" + "), ")", sep=""), " ^ 5")))
 		modelos_int[[i]][[j]] <- lm(formulas_int[[i]][[j]], data_train)
 	}
 }
+		
+		
+	
