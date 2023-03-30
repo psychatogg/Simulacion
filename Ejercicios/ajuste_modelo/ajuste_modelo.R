@@ -68,9 +68,12 @@ miFit <- function(data,dependiente) {
 
 miFit(data_train,"mpg")
 
+## En conjunto de test
+mejor_modelo <- lm(mpg ~ (displacement + horsepower + weight + acceleration + model.year)^5,data_train)
+data_predicts <- predict(mejor_modelo, data_test)
 
-
-
+# Calculo el MSE
+mean((data_test$mpg-data_predicts)**2)
 
 
 ####### PRUEBAS #####
