@@ -11,6 +11,8 @@ miFit <- function(data,dependiente) {
 	modelos <- list()
 	formulas_int <- list()
 	modelos_int <- list()
+	mses<- list()
+	mses_int <- list()
 	preds <- names(data[,2:7]) ## Obviamos el nombre del coche por colinealidad
 	comb_preds <- list()
 	
@@ -26,53 +28,61 @@ miFit <- function(data,dependiente) {
 		modelos[[i]] <- vector("list", ncol(comb_preds[[i]]))
 		formulas_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
 		modelos_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
+		mses <- vector("list", ncol(comb_preds[[i]]))
+		mses_int <- vector("list", ncol(comb_preds[[i]]))
 	}
 	## Genera Lms con todas las combos de predictores
-		for (i in 1: length(comb_preds)) { 
-			for (j in 1:ncol(comb_preds[[i]])) { 
-				formulas[[i]][[j]] <- formula(paste(dependiente, paste(comb_preds[[i]][,j], collapse = " + "), sep = " ~ "))
-				modelos[[i]][[j]] <- lm(formulas[[i]][[j]], data)
-			}
+	for (i in 1: length(comb_preds)) { 
+		for (j in 1:ncol(comb_preds[[i]])) { 
+			formulas[[i]][[j]] <- formula(paste(dependiente, paste(comb_preds[[i]][,j],
+																														 collapse = " + "),
+																					                          sep = " ~ "))
+			modelos[[i]][[j]] <- lm(formulas[[i]][[j]], data)
+			mses[[i]][[j]] <- mean(modelos[[i]][[j]]$residuals^2)
 		}
+	}
 	## Genera Lms de todas las combos con todas las interacciones
 	for (i in 2:length(comb_preds)) { ## No quiero que explore con un coeficiente (no hay interaccion)
 		for (j in 1:ncol(comb_preds[[i]])) { 
 			formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
-																							paste(paste0("(", paste(comb_preds[[i]][,j], collapse=" + "), ")", sep=""), " ^ 5")))
+																							paste(paste0("(", paste(comb_preds[[i]][,j],
+																																  collapse=" + "),
+																													             ")", sep=""),
+																										                         " ^ 5")))
 			modelos_int[[i]][[j]] <- lm(formulas_int[[i]][[j]], data)
+			mses_int[[i]][[j]] <- mean(modelos_int[[i]][[j]]$residuals^2)
 		}
 	}
-	return(modelos_int)
+	## Obtener las fórmulas con el mínimo MSE.
+	## Sin interacciones
+	pos_min_mse <- which.min(unlist(mses))
+	formulas <- unlist(formulas)
+	## Con interacciones
+	pos_min_mse_int <- which.min(unlist(mses_int))
+	formulas_int <- unlist(formulas_int)
+	cat(sprintf("El MSE mínimo sin interacciones es: %5.2f . Con interacciones es: %5.2f",
+							min(unlist(mses)),min(unlist(mses_int))))
+	return(c("Sus respectivas fórmulas son:",formulas[pos_min_mse],
+					 formulas_int[pos_min_mse_int])) ## mismos indices en todas las listas
 }
 
 miFit(data_train,"mpg")
 
 
 
+
+
+
 ####### PRUEBAS #####
 
-########### 5 PREDICTORES
-miFit <- function(data,dependiente) {
-	preds <- names(data[,-1])
-	comb_preds <- combn(preds,5)
-	formulas <- list()
-	MSEs <- rep(NA, ncol(comb_preds))
-	modelos <- list()
-	
-	
-	## 5 predictores
-	for (i in 1:ncol(comb_preds)) {
-		formulas[[i]] <- formula(paste(dependiente, paste(comb_preds[,i], collapse = " + "), sep = " ~ "))
-		modelos[[i]] <- lm(formulas[[i]], data)
-	}
-	return(modelos)
-}
 #############FUERA DE FUNCIÓN###############
 
 formulas <- list()
 modelos <- list()
 formulas_int <- list()
 modelos_int <- list()
+mses <- list()
+mses_int <- list()
 preds <- names(data_train[,2:7]) 
 comb_preds <- list()
 dependiente<-"mpg"
@@ -88,12 +98,15 @@ for (i in 1: length(comb_preds)) {
 	modelos[[i]] <- vector("list", ncol(comb_preds[[i]]))
 	formulas_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
 	modelos_int[[i]] <- vector("list", ncol(comb_preds[[i]]))
+	mses <- vector("list", ncol(comb_preds[[i]]))
+	mses_int <- vector("list", ncol(comb_preds[[i]]))
 }
 
 for (i in 1: length(comb_preds)) { 
 	for (j in 1:ncol(comb_preds[[i]])) { 
 		formulas[[i]][[j]] <- formula(paste(dependiente, paste(comb_preds[[i]][,j], collapse = " + "), sep = " ~ "))
 		modelos[[i]][[j]] <- lm(formulas[[i]][[j]], data_train)
+		mses[[i]][[j]] <- mean(modelos[[i]][[j]]$residuals^2)
 	}
 }
 
@@ -102,8 +115,9 @@ for (i in 2:length(comb_preds)) {
 		formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
 																						paste(paste0("(", paste(comb_preds[[i]][,j], collapse=" + "), ")", sep=""), " ^ 5")))
 		modelos_int[[i]][[j]] <- lm(formulas_int[[i]][[j]], data_train)
+		mses_int[[i]][[j]] <- mean(modelos_int[[i]][[j]]$residuals^2)
 	}
 }
-		
-		
-	
+
+a<- unlist(mses)
+
