@@ -35,14 +35,14 @@ miFit <- function(data,dependiente) {
 			}
 		}
 	## Genera Lms de todas las combos con todas las interacciones
-	for (i in 1:length(comb_preds)) { 
+	for (i in 2:length(comb_preds)) { ## No quiero que explore con un coeficiente (no hay interaccion)
 		for (j in 1:ncol(comb_preds[[i]])) { 
 			formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
 																							paste(paste0("(", paste(comb_preds[[i]][,j], collapse=" + "), ")", sep=""), " ^ 5")))
 			modelos_int[[i]][[j]] <- lm(formulas_int[[i]][[j]], data)
 		}
 	}
-	return(modelos[[2]][[1]])
+	return(modelos_int)
 }
 
 miFit(data_train,"mpg")
@@ -97,7 +97,7 @@ for (i in 1: length(comb_preds)) {
 	}
 }
 
-for (i in 1:length(comb_preds)) { 
+for (i in 2:length(comb_preds)) { 
 	for (j in 1:ncol(comb_preds[[i]])) { 
 		formulas_int[[i]][[j]] <- formula(paste(dependiente, "~",
 																						paste(paste0("(", paste(comb_preds[[i]][,j], collapse=" + "), ")", sep=""), " ^ 5")))
