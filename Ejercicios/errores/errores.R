@@ -320,10 +320,34 @@ lines(density(vars2),col= "green")
 
 ## 6
 set.seed(1)
-
+## 1.96 
 N=1000 # tamano de la poblacion
 n = 25 # tamano de las muestras
 k = 25000
+poblacion <- rnorm(N, 5, 2)
+medpob <- mean(poblacion)
+li <- medpob -1.96*(sd(poblacion)/sqrt(n))
+ls <- medpob +1.96*(sd(poblacion)/sqrt(n)) 
+
+med_muestras <- vector(length = 1000)
+med_muestras_IC <- c()
+for (i in 1:1000) {
+	muestra <- sample(poblacion,n)
+	med_muestras[i] <- mean(muestra)
+	if(li<= med_muestras[i] && med_muestras[i] <= ls) {
+		med_muestras_IC[i] <- med_muestras[i]
+	}
+	
+}
+med_muestras_IC <- na.omit(med_muestras_IC)
+length(med_muestras_IC)/length(med_muestras)
+
+
+
+
+
+
+## 2.58
 poblacion <- rnorm(N, 5, 2)
 medpob <- mean(poblacion)
 li <- medpob -2.58*(sd(poblacion)/sqrt(n))
@@ -342,3 +366,31 @@ for (i in 1:1000) {
 med_muestras_IC <- na.omit(med_muestras_IC)
 length(med_muestras_IC)/length(med_muestras)
 
+## 7
+
+set.seed(1)
+N=1000
+n = 25
+
+k = 500
+a_emp <- vector("integer",length = 4)
+
+for (c in 2:5) {
+poblacion <- runif(N,0,c)
+mu.pob <- mean(poblacion)
+sd.pob <- sd(poblacion)
+
+p <- vector(length=k)
+for (i in 1:k){
+	muestra <- poblacion[sample(1:N, n)]
+	p[i] <- t.test(muestra, mu = mu.pob)$p.value
+}
+
+a_teo = 0.05
+a_emp[c-1] = length(p[p<a_teo])/k
+
+}
+
+plot(x=2:5,y=a_emp)
+
+## 8
