@@ -393,22 +393,24 @@ a_emp[c-1] = length(p[p<a_teo])/k
 
 plot(x=2:5,y=a_emp)
 abline(0.05,0)
+
 ## 8
+
 set.seed(1)
-N=c(100,1000,10000,100000)
-n = 25
+N=1000
+n = c(2,10,15,20)
 
 k = 500
 a_emp <- vector("integer",length = 4)
 
 for (c in 1:4) {
-	poblacion <- rnorm(N[c], 10, 10)
+	poblacion <- rnorm(N, 10, 10)
 	mu.pob <- mean(poblacion)
 	sd.pob <- sd(poblacion)
 	
 	p <- vector(length=k)
 	for (i in 1:k){
-		muestra <- poblacion[sample(1:N, n)]
+		muestra <- poblacion[sample(1:N, n[c])]
 		p[i] <- t.test(muestra, mu = mu.pob)$p.value
 	}
 	
@@ -417,7 +419,7 @@ for (c in 1:4) {
 	
 }
 
-plot(x=N,y=a_emp)
+plot(x=n,y=a_emp)
 abline(0.05,0)
 
 ## 9
@@ -451,3 +453,6 @@ for (c in seq(0,0.4,by=0.1)) {
 
 plot(x=seq(0,0.4,by=0.1),y=a_emp)
 abline(0.05,0)
+
+## 10
+
