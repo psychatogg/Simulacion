@@ -462,10 +462,11 @@ k = 500
 a_teo = 0.05
 beta_teo <- vector("integer",length = 4)
 beta_emp <- vector("integer",length = 4)
+dif <- vector("integer",length = 4)
 
 # creamos la poblacion
-set.seed(1)
 for (c in 2:5) {
+set.seed(1)
 poblacion <- runif(N,0,c)
 
 m.pob <- mean(poblacion)
@@ -487,10 +488,50 @@ beta_teo[c-1] <- 1 - pwr.t.test(n,
 													 d=d,
 													 sig.level=a_teo,
 													 type="one.sample")$power
+dif[c-1] <- beta_teo[c]-beta_emp[c]
 }
 
 
 
 
-plot(x=beta_teo,y=beta_emp)
+plot(x= 2:5, y=dif)
 ## Ninguna p es mayor a alpha. Coincide con la teórica.
+
+
+## 11
+set.seed(1)
+N=1000
+n = c(2,10,15,20)
+
+k = 500
+beta_emp <- vector("integer",length = 4)
+beta_teo <- vector("integer",length = 4)
+dif <- vector("integer",length = 4)
+
+for (c in 1:4) {
+	# creamos la poblacion
+	poblacion <- rnorm(N, 10, 10)
+	m.pob <- mean(poblacion)
+	sd.pob <- sd(poblacion)
+	
+	# simulamos los datos y recogemos el valor de pvalue
+	p <- vector(length=k)
+	for (i in 1:k){
+		muestra <- poblacion[sample(1:N, n[c])]
+		p[i] <- t.test(muestra, mu=15)$p.value
+	}
+	
+	# calculamos beta empirica
+	beta_emp[c] <- length(p[p>a_teo])/k
+	
+	# calculamos beta teorica
+	d=(10 - 15) / sd.pob
+	beta_teo[c] <- 1 - pwr.t.test(n[c],
+														 d=d,
+														 sig.level=a_teo,
+														 type="one.sample")$power
+	dif[c] <- beta_teo[c]-beta_emp[c]
+}
+
+
+plot(x=n,y= dif)
