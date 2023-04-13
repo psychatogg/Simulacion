@@ -542,3 +542,5 @@ plot(x=n,y= dif)
 
 
 ## 12
+
+## mismo procedimiento que el 9
