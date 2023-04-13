@@ -369,7 +369,7 @@ length(med_muestras_IC)/length(med_muestras)
 
 ## 7
 
-set.seed(1)
+
 N=1000
 n = 25
 
@@ -377,6 +377,7 @@ k = 500
 a_emp <- vector("integer",length = 4)
 
 for (c in 2:5) {
+set.seed(1)
 poblacion <- runif(N,0,c)
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
@@ -397,7 +398,7 @@ abline(0.05,0)
 
 ## 8
 
-set.seed(1)
+
 N=1000
 n = c(2,10,15,20)
 
@@ -405,6 +406,7 @@ k = 500
 a_emp <- vector("integer",length = 4)
 
 for (c in 1:4) {
+	set.seed(1)
 	poblacion <- rnorm(N, 10, 10)
 	mu.pob <- mean(poblacion)
 	sd.pob <- sd(poblacion)
@@ -424,7 +426,7 @@ plot(x=n,y=a_emp)
 abline(0.05,0)
 
 ## 9
-set.seed(1)
+
 N=1000
 n = 25
 
@@ -435,6 +437,7 @@ p <- matrix(0,nrow = k,ncol = 3)
 
 for (a in 1:3) {
 	for (c in seq(0,0.2,by=0.3)) {
+		set.seed(1)
 		parms <- JohnsonFit(c(0,1,c,2.2),moment= "use")
 		
 		poblacion <- rJohnson(N,parms)
@@ -451,7 +454,7 @@ for (a in 1:3) {
 }
 medias_p <- apply(p,2, mean)
 print(medias_p)
-## más asimétrica, menor p, más probabilidad de rechazar.
+
 
 ## 10
 
@@ -499,7 +502,7 @@ plot(x= 2:5, y=dif)
 
 
 ## 11
-set.seed(1)
+
 N=1000
 n = c(2,10,15,20)
 
@@ -510,6 +513,7 @@ dif <- vector("integer",length = 4)
 
 for (c in 1:4) {
 	# creamos la poblacion
+	set.seed(1)
 	poblacion <- rnorm(N, 10, 10)
 	m.pob <- mean(poblacion)
 	sd.pob <- sd(poblacion)
@@ -535,3 +539,6 @@ for (c in 1:4) {
 
 
 plot(x=n,y= dif)
+
+
+## 12
