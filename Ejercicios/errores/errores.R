@@ -1,6 +1,7 @@
 library(moments)
 library(SuppDists)
 library(ggplot2)
+library(pwr)
 d <- rnorm(1000,0,1)
 skewness(d)
 kurtosis(d)
@@ -450,7 +451,46 @@ for (a in 1:3) {
 }
 medias_p <- apply(p,2, mean)
 print(medias_p)
-## más asimétrica, menor p, más probabilidad de rechazar
+## más asimétrica, menor p, más probabilidad de rechazar.
 
 ## 10
 
+# parametros
+N=1000
+n = 25
+k = 500
+a_teo = 0.05
+beta_teo <- vector("integer",length = 4)
+beta_emp <- vector("integer",length = 4)
+
+# creamos la poblacion
+set.seed(1)
+for (c in 2:5) {
+poblacion <- runif(N,0,c)
+
+m.pob <- mean(poblacion)
+sd.pob <- sd(poblacion)
+
+# simulamos los datos y recogemos el valor de pvalue
+p <- vector(length=k)
+for (i in 1:k){
+	muestra <- poblacion[sample(1:N, n)]
+	p[i] <- t.test(muestra, mu=15)$p.value
+}
+
+# calculamos beta empirica
+beta_emp[c-1] <- length(p[p>a_teo])/k
+
+# calculamos beta teorica
+d=(10 - 15) / sd.pob
+beta_teo[c-1] <- 1 - pwr.t.test(n,
+													 d=d,
+													 sig.level=a_teo,
+													 type="one.sample")$power
+}
+
+
+
+
+plot(x=beta_teo,y=beta_emp)
+## Ninguna p es mayor a alpha. Coincide con la teórica.
