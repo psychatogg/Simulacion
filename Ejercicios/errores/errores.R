@@ -419,3 +419,35 @@ for (c in 1:4) {
 
 plot(x=N,y=a_emp)
 abline(0.05,0)
+
+## 9
+set.seed(1)
+N=1000
+n = 25
+
+k = 500
+a_emp <- vector("integer",length = 5)
+
+for (a in 1:5) {
+for (c in seq(0,0.4,by=0.1)) {
+	parms <- JohnsonFit(c(0,1,c,2.2),moment= "use")
+	
+	poblacion <- rJohnson(N,parms)
+	mu.pob <- mean(poblacion)
+	sd.pob <- sd(poblacion)
+	
+	p <- vector(length=k)
+	for (i in 1:k){
+		muestra <- poblacion[sample(1:N, n)]
+		p[i] <- t.test(muestra, mu = mu.pob)$p.value
+	}
+	
+	a_teo = 0.05
+	a_emp[a] = length(p[p<a_teo])/k
+	
+}
+}
+
+
+plot(x=seq(0,0.4,by=0.1),y=a_emp)
+abline(0.05,0)
