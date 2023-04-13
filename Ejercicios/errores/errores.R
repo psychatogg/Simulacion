@@ -428,31 +428,29 @@ N=1000
 n = 25
 
 k = 500
-a_emp <- vector("integer",length = 5)
 
-for (a in 1:5) {
-for (c in seq(0,0.4,by=0.1)) {
-	parms <- JohnsonFit(c(0,1,c,2.2),moment= "use")
-	
-	poblacion <- rJohnson(N,parms)
-	mu.pob <- mean(poblacion)
-	sd.pob <- sd(poblacion)
-	
-	p <- vector(length=k)
-	for (i in 1:k){
-		muestra <- poblacion[sample(1:N, n)]
-		p[i] <- t.test(muestra, mu = mu.pob)$p.value
+a_emp <- vector("integer",length = 3)
+p <- matrix(0,nrow = k,ncol = 3)
+
+for (a in 1:3) {
+	for (c in seq(0,0.2,by=0.3)) {
+		parms <- JohnsonFit(c(0,1,c,2.2),moment= "use")
+		
+		poblacion <- rJohnson(N,parms)
+		mu.pob <- mean(poblacion)
+		sd.pob <- sd(poblacion)
+		
+		
+		for (i in 1:k){
+			muestra <- poblacion[sample(1:N, n)]
+			p[i,a] <- t.test(muestra, mu = mu.pob)$p.value
+			
+		}
 	}
-	
-	a_teo = 0.05
-	a_emp[a] = length(p[p<a_teo])/k
-	
 }
-}
-
-
-plot(x=seq(0,0.4,by=0.1),y=a_emp)
-abline(0.05,0)
+medias_p <- apply(p,2, mean)
+print(medias_p)
+## más asimétrica, menor p, más probabilidad de rechazar
 
 ## 10
 
