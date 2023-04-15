@@ -510,7 +510,7 @@ dif[c-1] <- beta_teo[c]-beta_emp[c]
 return(dif)	
 }
 
-resultados <- replicate(100,gen())
+resultados <- replicate(500,gen())
 mean_resultados <- rowMeans(resultados)
 
 plot(x= 2:5, y=mean_resultados)
@@ -518,7 +518,7 @@ plot(x= 2:5, y=mean_resultados)
 
 
 ## 11
-
+set.seed(1)
 N=1000
 n = c(2,10,15,20)
 a_teo <- 0.05
@@ -529,7 +529,6 @@ dif <- vector("integer",length = 4)
 gen <- function() {
 for (c in 1:4) {
 	# creamos la poblacion
-	set.seed(1)
 	poblacion <- rnorm(N, 10, 10)
 	m.pob <- mean(poblacion)
 	sd.pob <- sd(poblacion)
@@ -538,14 +537,14 @@ for (c in 1:4) {
 	p <- vector(length=k)
 	for (i in 1:k){
 		muestra <- poblacion[sample(1:N, n[c])]
-		p[i] <- t.test(muestra, mu=15)$p.value
+		p[i] <- t.test(muestra, mu=m.pob+0.8*sd.pob)$p.value
 	}
 	
 	# calculamos beta empirica
 	beta_emp[c] <- length(p[p>a_teo])/k
 	
 	# calculamos beta teorica
-	d=(10 - 15) / sd.pob
+	d=(10 - (m.pob+0.8*sd.pob)) / sd.pob
 	beta_teo[c] <- 1 - pwr.t.test(n[c],
 														 d=d,
 														 sig.level=a_teo,
@@ -554,7 +553,7 @@ for (c in 1:4) {
 }
 	return(beta_emp)
 }
-resultados <- replicate(500,gen())
+resultados <- replicate(100,gen())
 mean_resultados <- rowMeans(resultados)
 plot(x=n,y= mean_resultados)
 
