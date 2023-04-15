@@ -112,7 +112,7 @@ sd.emp <- sd(means)
 
 sprintf("Media teoría: %.2f -- Media empírica : %.2f", m.teo, m.emp)
 
-## [1] "Media teoría: 4.98 -- Media empírica : 4.98"
+
 sprintf("Sd teoría: %.2f -- Sd empírica : %.2f", sd.teo, sd.emp)
 
 
@@ -158,7 +158,7 @@ sd.emp <- sd(means)
 
 sprintf("Media teoría: %.2f -- Media empírica : %.2f", m.teo, m.emp)
 
-## [1] "Media teoría: 4.98 -- Media empírica : 4.98"
+
 sprintf("Sd teoría: %.2f -- Sd empírica : %.2f", sd.teo, sd.emp)
 
 
@@ -201,7 +201,7 @@ sd.emp <- sd(means)
 
 sprintf("Media teoría: %.2f -- Media empírica : %.2f", m.teo, m.emp)
 
-## [1] "Media teoría: 4.98 -- Media empírica : 4.98"
+
 sprintf("Sd teoría: %.2f -- Sd empírica : %.2f", sd.teo, sd.emp)
 
 
@@ -243,7 +243,7 @@ sd.emp <- sd(means)
 
 sprintf("Media teoría: %.2f -- Media empírica : %.2f", m.teo, m.emp)
 
-## [1] "Media teoría: 4.98 -- Media empírica : 4.98"
+
 sprintf("Sd teoría: %.2f -- Sd empírica : %.2f", sd.teo, sd.emp)
 
 
@@ -324,7 +324,7 @@ set.seed(1)
 ## 1.96 
 N=1000 # tamano de la poblacion
 n = 25 # tamano de las muestras
-k = 25000
+
 poblacion <- rnorm(N, 5, 2)
 medpob <- mean(poblacion)
 li <- medpob -1.96*(sd(poblacion)/sqrt(n))
@@ -370,14 +370,14 @@ length(med_muestras_IC)/length(med_muestras)
 ## 7
 
 
-N=1000
+N=100000
 n = 25
 
 k = 500
 a_emp <- vector("integer",length = 4)
-
-for (c in 2:5) {
 set.seed(1)
+for (c in 2:5) {
+
 poblacion <- runif(N,0,c)
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
