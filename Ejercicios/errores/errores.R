@@ -370,18 +370,19 @@ length(med_muestras_IC)/length(med_muestras)
 ## 7
 
 
-N=100000
+N=1000
 n = 25
 
 k = 500
 a_emp <- vector("integer",length = 4)
-set.seed(1)
-for (c in 2:5) {
 
+
+set.seed(1)
+gen <- function() {
+for (c in 2:5) {
 poblacion <- runif(N,0,c)
 mu.pob <- mean(poblacion)
 sd.pob <- sd(poblacion)
-
 p <- vector(length=k)
 for (i in 1:k){
 	muestra <- poblacion[sample(1:N, n)]
@@ -392,11 +393,16 @@ a_teo = 0.05
 a_emp[c-1] = length(p[p<a_teo])/k
 
 }
+	return(a_emp)
+}
+resultados <- replicate(500,gen())
+mean_resultados <- rowMeans(resultados)
 
-plot(x=2:5,y=a_emp)
+plot(x=2:5,y=mean_resultados)
 abline(0.05,0)
 
 ## 8
+
 
 
 N=1000
@@ -405,8 +411,10 @@ n = c(2,10,15,20)
 k = 500
 a_emp <- vector("integer",length = 4)
 
+
+gen <- function() {
 for (c in 1:4) {
-	set.seed(1)
+	
 	poblacion <- rnorm(N, 10, 10)
 	mu.pob <- mean(poblacion)
 	sd.pob <- sd(poblacion)
@@ -421,23 +429,27 @@ for (c in 1:4) {
 	a_emp[c] = length(p[p<a_teo])/k
 	
 }
-
-plot(x=n,y=a_emp)
+	return(a_emp)
+}
+resultados <- replicate(500,gen())
+mean_resultados <- rowMeans(resultados)
+plot(x=n,y=mean_resultados)
 abline(0.05,0)
 
 ## 9
 
-N=1000
+N=800
 n = 25
 
 k = 500
 
 a_emp <- vector("integer",length = 3)
 p <- matrix(0,nrow = k,ncol = 3)
-
+set.seed(1)
+gen <- function() {
 for (a in 1:3) {
 	for (c in seq(0,0.2,by=0.3)) {
-		set.seed(1)
+		
 		parms <- JohnsonFit(c(0,1,c,2.2),moment= "use")
 		
 		poblacion <- rJohnson(N,parms)
@@ -453,7 +465,10 @@ for (a in 1:3) {
 	}
 }
 medias_p <- apply(p,2, mean)
-print(medias_p)
+return(medias_p)
+}
+resultados <- replicate(500,gen())
+mean_resultados <- rowMeans(resultados)
 
 
 ## 10
@@ -466,10 +481,9 @@ a_teo = 0.05
 beta_teo <- vector("integer",length = 4)
 beta_emp <- vector("integer",length = 4)
 dif <- vector("integer",length = 4)
-
-# creamos la poblacion
-for (c in 2:5) {
 set.seed(1)
+gen <- function() {
+for (c in 2:5) {
 poblacion <- runif(N,0,c)
 
 m.pob <- mean(poblacion)
@@ -479,7 +493,7 @@ sd.pob <- sd(poblacion)
 p <- vector(length=k)
 for (i in 1:k){
 	muestra <- poblacion[sample(1:N, n)]
-	p[i] <- t.test(muestra, mu=15)$p.value
+	p[i] <- t.test(muestra, mu=m.pob)$p.value
 }
 
 # calculamos beta empirica
@@ -493,11 +507,13 @@ beta_teo[c-1] <- 1 - pwr.t.test(n,
 													 type="one.sample")$power
 dif[c-1] <- beta_teo[c]-beta_emp[c]
 }
+return(dif)	
+}
 
+resultados <- replicate(100,gen())
+mean_resultados <- rowMeans(resultados)
 
-
-
-plot(x= 2:5, y=dif)
+plot(x= 2:5, y=mean_resultados)
 ## Ninguna p es mayor a alpha. Coincide con la teórica.
 
 
@@ -505,12 +521,12 @@ plot(x= 2:5, y=dif)
 
 N=1000
 n = c(2,10,15,20)
-
+a_teo <- 0.05
 k = 500
 beta_emp <- vector("integer",length = 4)
 beta_teo <- vector("integer",length = 4)
 dif <- vector("integer",length = 4)
-
+gen <- function() {
 for (c in 1:4) {
 	# creamos la poblacion
 	set.seed(1)
@@ -536,9 +552,11 @@ for (c in 1:4) {
 														 type="one.sample")$power
 	dif[c] <- beta_teo[c]-beta_emp[c]
 }
-
-
-plot(x=n,y= dif)
+	return(beta_emp)
+}
+resultados <- replicate(500,gen())
+mean_resultados <- rowMeans(resultados)
+plot(x=n,y= mean_resultados)
 
 
 ## 12
