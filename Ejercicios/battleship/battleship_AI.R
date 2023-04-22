@@ -1,8 +1,8 @@
 
 library(neuralnet)
 source("E:\\GDrive1\\Uni\\Master\\simulacion\\ejercicios\\battleship\\game\\funciones.R")
-##############Preprocess#####################
 
+##############Training set 1#######################################
 flota <- list()
 
 flota[[1]] <- creaBarco("A", c(1,1,
@@ -20,37 +20,310 @@ flota[[3]] <- creaBarco("C", c(6,3,
 
 tablero <- nuevoTablero(10, 10, flota)
 
+## Le pido a chatgpt que genere jugadas para la flota anterior empleando búsqueda en cruz
+## y que intercale malas jugadas
 jugadas <- list()
-jugadas[[1]] <- c(4,1)
-jugadas[[2]] <- c(6,3)
-jugadas[[3]] <- c(5,1)
+## Subset 1
+jugadas[[1]] <- c(1,1)  # buena jugada
+jugadas[[2]] <- c(2,1)  # buena jugada
+jugadas[[3]] <- c(3,1)  # buena jugada
+jugadas[[4]] <- c(4,1)  # buena jugada
+jugadas[[5]] <- c(5,1)  # buena jugada
+jugadas[[6]] <- c(6,1)  # mala jugada
+jugadas[[7]] <- c(7,1)  # buena jugada
+jugadas[[8]] <- c(8,1)  # buena jugada
+jugadas[[9]] <- c(9,1)  # buena jugada
+## Subset 2
+jugadas[[10]] <- c(10,1)  # mala jugada
+jugadas[[11]] <- c(10,2)  # buena jugada
+jugadas[[12]] <- c(10,3)  # buena jugada
+jugadas[[13]] <- c(10,4)  # mala jugada
+jugadas[[14]] <- c(9,4)  # buena jugada
+jugadas[[15]] <- c(8,4)  # mala jugada
+jugadas[[16]] <- c(8,5)  # buena jugada
+jugadas[[17]] <- c(8,6)  # buena jugada
+jugadas[[18]] <- c(8,7)  # buena jugada
+## Subset 3
+jugadas[[19]] <- c(8,8)  # buena jugada
+jugadas[[20]] <- c(8,9)  # mala jugada
+jugadas[[21]] <- c(7,9)  # buena jugada
+jugadas[[22]] <- c(6,9)  # buena jugada
+jugadas[[23]] <- c(5,9)  # mala jugada
+jugadas[[24]] <- c(5,8)  # buena jugada
+jugadas[[25]] <- c(5,7)  # buena jugada
+jugadas[[26]] <- c(5,6)  # mala jugada
+jugadas[[27]] <- c(4,6)  # buena jugada
+## Test subset
+jugadas[[28]] <- c(3,6)  # buena jugada
+jugadas[[29]] <- c(2,6)  # buena jugada
+jugadas[[30]] <- c(1,6)  # mala jugada
+jugadas[[31]] <- c(1,7)  # buena jugada
+jugadas[[32]] <- c(1,8)  # buena jugada
+jugadas[[33]] <- c(1,9)  # mala jugada
+jugadas[[34]] <- c(2,9)  # buena jugada
+jugadas[[35]] <- c(3,9)  # mala jugada
+jugadas[[36]] <- c(3,8)  # buena jugada
+## No utilizados
+jugadas[[37]] <- c(3,7)  # buena jugada
+jugadas[[38]] <- c(3,6)  # mala jugada
+jugadas[[39]] <- c(4,5)  # mala jugada
+jugadas[[40]] <- c(5,5)  # mala jugada
 
-alcances_pred <- c(0,1,1)
 
-## Extrae posiciones de flota de cada eje
+## Defino vector indicando cuáles son buenas
+buena_jugada <- unlist(lapply(jugadas, function(x) ifelse(x[1] == 6 | x[1] == 10 | x[2] == 5 | x[2] == 9, 0, 1)))
+
+
+
+
+##############Preprocess#####################
+## Extrae coordenadas de posiciones
 
 
 posiciones_y<- c()
+posiciones_x <- c()
 c = 1
 for(a in 1:length(flota)){
 		for(n in 1:nrow(flota[[a]]$pos)){
 			posiciones_y[c] <- flota[[a]]$pos[n,1]
+			posiciones_x[c] <- flota[[a]]$pos[n,2]
 			c = c + 1
 		}
 	}
 
+## Extrae coordenadas de jugadas
+
+jugadas <- as.data.frame(jugadas)
+jugadas_y <- as.integer(jugadas[1,])
+jugadas_x <- as.integer(jugadas[2,])
 
 
 
 
+training_data_11 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[1:9],jugadas_y = jugadas_y[1:9], buena_jugada = buena_jugada[1:9])
+training_data_12 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[10:18],jugadas_y = jugadas_y[10:18], buena_jugada = buena_jugada[10:18])
+training_data_13 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[19:27],jugadas_y = jugadas_y[19:27], buena_jugada = buena_jugada[19:27])
+training_data_14 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[28:36],jugadas_y = jugadas_y[28:36], buena_jugada = buena_jugada[28:36])
+#####Training##############################
 
-
-training_data <- data.frame(,alcances_pred)
-
-
-
-nn <- neuralnet(alcances_pred ~ flota+jugadas,
-								hidden = 5,
-								data = training_data,
+nn_11 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
+								hidden = 40,
+								data = training_data_11,
 								algorithm = "backprop",
-								learningrate = 0.05)
+								learningrate = 0.001,
+								act.fct="logistic",
+								rep =10)
+
+
+nn_12 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
+									 training_data_12, hidden = 40,
+									 startweights = nn_11$weights,
+									 algorithm = "backprop",
+									 learningrate = 0.001,
+									 act.fct="logistic",
+									 rep =10)
+
+nn_13 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
+									 training_data_13, hidden = 40,
+									 startweights = nn_12$weights,
+									 algorithm = "backprop",
+									 learningrate = 0.001,
+									 act.fct="logistic",
+									 rep =10)
+
+nn_14 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
+									 training_data_14, hidden = 40,
+									 startweights = nn_13$weights,
+									 algorithm = "backprop",
+									 learningrate = 0.001,
+									 act.fct="logistic",
+									 rep =10)
+
+
+
+
+
+
+
+
+
+##############Training set 2#####################
+
+flota <- list()
+
+flota[[1]] <- creaBarco("A", c(1,1,
+															 1,2,
+															 1,3,
+															 1,4))
+
+flota[[2]] <- creaBarco("B", c(3,1,
+															 4,1,
+															 5,1,
+															 6,1))
+
+flota[[3]] <- creaBarco("C", c(8,1,
+															 8,2,
+															 8,3))
+
+flota[[4]] <- creaBarco("D", c(3,3,
+															 3,4,
+															 3,5))
+
+flota[[5]] <- creaBarco("E", c(5,3,
+															 5,4))
+
+flota[[6]] <- creaBarco("F", c(7,5,
+															 7,6))
+
+flota[[7]] <- creaBarco("G", c(9,3,
+															 9,4))
+
+flota[[8]] <- creaBarco("H", c(2,7))
+
+flota[[9]] <- creaBarco("I", c(4,7))
+
+flota[[10]] <- creaBarco("J", c(6,7))
+
+flota[[11]] <- creaBarco("K", c(8,7))
+
+tablero <- nuevoTablero(10, 10, flota)
+
+jugadas <- list()
+jugadas[[1]] <- c(1, 1) # buena jugada
+jugadas[[2]] <- c(3, 1) # mala jugada
+jugadas[[3]] <- c(2, 1) # buena jugada
+jugadas[[4]] <- c(4, 1) # mala jugada
+jugadas[[5]] <- c(3, 2) # buena jugada
+jugadas[[6]] <- c(5, 1) # mala jugada
+jugadas[[7]] <- c(4, 2) # buena jugada
+jugadas[[8]] <- c(6, 1) # mala jugada
+jugadas[[9]] <- c(5, 2) # buena jugada
+jugadas[[10]] <- c(7, 1) # mala jugada
+jugadas[[11]] <- c(6, 2) # buena jugada
+jugadas[[12]] <- c(8, 1) # mala jugada
+jugadas[[13]] <- c(7, 2) # buena jugada
+jugadas[[14]] <- c(9, 1) # mala jugada
+jugadas[[15]] <- c(8, 2) # buena jugada
+jugadas[[16]] <- c(10, 1) # mala jugada
+jugadas[[17]] <- c(9, 2) # buena jugada
+jugadas[[18]] <- c(1, 3) # mala jugada
+jugadas[[19]] <- c(10, 2) # buena jugada
+jugadas[[20]] <- c(2, 3) # mala jugada
+jugadas[[21]] <- c(4, 4) # buena jugada
+jugadas[[22]] <- c(6, 6) # buena jugada
+jugadas[[23]] <- c(8, 8) # buena jugada
+jugadas[[24]] <- c(1, 10) # buena jugada
+jugadas[[25]] <- c(9, 2) # buena jugada
+jugadas[[26]] <- c(3, 7) # buena jugada
+jugadas[[27]] <- c(5, 5) # buena jugada
+jugadas[[28]] <- c(2, 5) # buena jugada
+jugadas[[29]] <- c(7, 8) # buena jugada
+jugadas[[30]] <- c(10, 1) # buena jugada
+jugadas[[31]] <- c(1, 7) # mala jugada
+jugadas[[32]] <- c(9, 9) # mala jugada
+jugadas[[33]] <- c(4, 6) # mala jugada
+jugadas[[34]] <- c(8, 1) # mala jugada
+jugadas[[35]] <- c(2, 10) # mala jugada
+jugadas[[36]] <- c(6, 4) # mala jugada
+jugadas[[37]] <- c(10, 7) # mala jugada
+jugadas[[38]] <- c(3, 2) # mala jugada
+jugadas[[39]] <- c(5, 9) # mala jugada
+jugadas[[40]] <- c(7, 3) # mala jugada
+jugadas[[41]] <- c(8,8) # buena jugada
+jugadas[[42]] <- c(2,9) # mala jugada
+jugadas[[43]] <- c(7,1) # buena jugada
+jugadas[[44]] <- c(9,9) # mala jugada
+jugadas[[45]] <- c(3,3) # buena jugada
+jugadas[[46]] <- c(6,6) # buena jugada
+jugadas[[47]] <- c(4,4) # buena jugada
+jugadas[[48]] <- c(9,4) # mala jugada
+## Test####
+jugadas[[49]] <- c(7,9) # mala jugada
+jugadas[[50]] <- c(5,4) # mala jugada
+jugadas[[51]] <- c(1,5) # buena jugada
+jugadas[[52]] <- c(3,9) # mala jugada
+jugadas[[53]] <- c(6,3) # buena jugada
+jugadas[[54]] <- c(2,2) # buena jugada
+jugadas[[55]] <- c(4,6) # mala jugada
+jugadas[[56]] <- c(10,5) # mala jugada
+jugadas[[57]] <- c(8,7) # buena jugada
+jugadas[[58]] <- c(9,6) # mala jugada
+jugadas[[59]] <- c(1,8) # mala jugada
+jugadas[[60]] <- c(10,2) # buena jugada
+jugadas[[61]] <- c(3,5) # mala jugada
+jugadas[[62]] <- c(5,6) # buena jugada
+jugadas[[63]] <- c(4,9) # mala jugada
+jugadas[[64]] <- c(6,8) # buena jugada
+jugadas[[65]] <- c(2,7) # mala jugada
+jugadas[[66]] <- c(7,5) # buena jugada
+jugadas[[67]] <- c(10,9) # mala jugada
+jugadas[[68]] <- c(8,3) # buena jugada
+jugadas[[69]] <- c(9,4) # mala jugada
+jugadas[[70]] <- c(1,2) # buena jugada
+jugadas[[71]] <- c(2,8) # mala jugada
+jugadas[[72]] <- c(3,10) # buena jugada
+
+buena_jugada <- c(1,0,1,0,1,0,1,1,1,0,1,0,0,1,0,0,0,1,0,1,0,0,1,1,1,0,1,0,1,1,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,0,0,0,1,0,1,0,0,1,0,0,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1)
+									
+									
+
+##############Preprocess#####################
+## Extrae coordenadas de posiciones
+
+
+posiciones_y<- c()
+posiciones_x <- c()
+c = 1
+for(a in 1:length(flota)){
+	for(n in 1:nrow(flota[[a]]$pos)){
+		posiciones_y[c] <- flota[[a]]$pos[n,1]
+		posiciones_x[c] <- flota[[a]]$pos[n,2]
+		c = c + 1
+	}
+}
+
+## Extrae coordenadas de jugadas
+
+jugadas <- as.data.frame(jugadas)
+jugadas_y <- as.integer(jugadas[1,])
+jugadas_x <- as.integer(jugadas[2,])
+
+
+
+
+training_data_21 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[1:24],jugadas_y = jugadas_y[1:24], buena_jugada = buena_jugada[1:24])
+training_data_22 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[25:48],jugadas_y = jugadas_y[25:48],buena_jugada = buena_jugada[25:48])
+test_data_2 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[49:72],jugadas_y = jugadas_y[49:72])
+#####Training##############################
+
+nn_21 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
+									 hidden = 40,
+									 startweights = nn_13$weights,
+									 data = training_data_21,
+									 algorithm = "backprop",
+									 learningrate = 0.001,
+									 act.fct="logistic",
+									 rep =10)
+
+nn_22 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
+									 hidden = 40,
+									 startweights = nn_21$weights,
+									 data = training_data_22,
+									 algorithm = "backprop",
+									 learningrate = 0.001,
+									 act.fct="logistic",
+									 rep =10)
+
+
+
+
+res2_training <- predict(nn_22, training_data_22,type="class")
+mse_training2 <- (sum(buena_jugada[25:48] - res2_training)^2)/length(res2_training)
+mse_training2
+
+res2_test <- predict(nn_22, test_data_2,type="class")
+mse_test2 <- (sum(buena_jugada[49:72] - res2_test)^2)/length(res2_test)
+mse_test2
+
+cbind(res2_training,buena_jugada[25:48])
+cbind(res2_test,buena_jugada[49:72])
