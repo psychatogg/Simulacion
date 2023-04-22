@@ -1,4 +1,4 @@
-
+library(beepr)
 library(neuralnet)
 source("E:\\GDrive1\\Uni\\Master\\simulacion\\ejercicios\\battleship\\game\\funciones.R")
 
@@ -338,11 +338,40 @@ cbind(res2_test,buena_jugada[49:72])
 
 ##################################################
 ###### Toma 24 blancos aleatorios y pide que los evalúe la red############
-x <- 1:10
+
+
+
+lanzamiento_rand <- function() {
+	radar_full <- 1:10 ## Primer lanzamiento, todo el tablero es área de operaciones
+	blanco <- c(sample(radar_full,1),sample(radar_full,1))
+	beep(7)
+	print(blanco)
+	return(blanco)
+}
+
+
+
+
+
+lanzamiento <- function() {
+	if (alcance_pregunta == 0){
+		rango_x = 1:10
+		rango_y = 1:10
+	} else {
+		## 2 tipos de exploraciones alrededor del punto, posteriormente asistida por la IA
+		randomgen <- runif(1,0,1)
+		if (randomgen<0.5) {
+		rango_x = c(seq(lanz_ultimo[1]-3, lanz_ultimo[1] - 1),seq(lanz_ultimo[1]+1, lanz_ultimo[1] +3))
+		rango_y = lanz_ultimo[2]
+		} else {
+			rango_x =  lanz_ultimo[1]
+			rango_y = c(seq(lanz_ultimo[2]-3, lanz_ultimo[2] - 1),seq(lanz_ultimo[2]+1, lanz_ultimo[2] +3))
+		}
+	}
 commander_table<- data.frame(posiciones_x=0,posiciones_y=0,jugadas_x =0,jugadas_y=0)
 for(i in 1:24) {
-	commander_table[i,1] <- sample(x,1)
-	commander_table[i,2] <- sample(x,1)
+	commander_table[i,1] <- sample(rango_x,1)
+	commander_table[i,2] <- sample(rango_y,1)
 	commander_table[i,3] <- commander_table[i,1]
 	commander_table[i,4] <- commander_table[i,2]
 	
@@ -359,4 +388,23 @@ for (i in 1:nrow(dec_matrix)) {
 ## el blanco seleccionado es el que tenga menor diferencia respecto a 1
 blanco <- dec_matrix[which.min(dec_matrix$dif), ]
 blanco <- as.integer(blanco[1,1:2])
+beep(7)
+print(blanco)
+return(blanco)
+}
 
+alcance_pregunta <- 0 
+hist_lanzamientos <- vector("list")
+
+
+
+#### Ejemplo partida####
+lanz_ultimo <- lanzamiento_rand()
+hist_lanzamientos[[1]] <- lanz_ultimo
+alcance_pregunta <- readline(prompt = "¿Enemigo alcanzado? ")
+for(i in 2:60) {
+readline(prompt = "Pulsa cualquier tecla para empezar tu turno ")
+lanz_ultimo <- lanzamiento()
+hist_lanzamientos[[i]] <- lanz_ultimo
+alcance_pregunta <- readline(prompt = "¿Enemigo alcanzado? ")
+}
