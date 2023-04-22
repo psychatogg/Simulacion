@@ -29,23 +29,16 @@ alcances_pred <- c(0,1,1)
 
 ## Extrae posiciones de flota de cada eje
 
-## Calcula total de posiciones en cada eje
-k <- c()
-for (i in 1:length(flota)) {
-	k[i]<-nrow(flota[[i]]$pos)
-}
 
-sum_k <- sum(k)
-
-posiciones_y<- vector("integer",sum_k)
+posiciones_y<- c()
+c = 1
 for(a in 1:length(flota)){
-	for(c in 1:sum_k) {
 		for(n in 1:nrow(flota[[a]]$pos)){
 			posiciones_y[c] <- flota[[a]]$pos[n,1]
-			
+			c = c + 1
 		}
 	}
-}
+
 
 
 
