@@ -389,6 +389,18 @@ for (i in 1:nrow(dec_matrix)) {
 blanco <- dec_matrix[which.min(dec_matrix$dif), ]
 blanco <- as.integer(blanco[1,1:2])
 beep(7)
+##### Corrección de rango #####
+if(blanco[1] <= 0) {
+	blanco[1] <- 1
+} else if(blanco[1] >= 11) {
+	blanco[1] <- 10
+}
+
+if(blanco[2] <= 0) {
+	blanco[2] <- 1
+} else if(blanco[2] >= 11) {
+	blanco[2] <- 10
+}
 print(blanco)
 return(blanco)
 }
@@ -399,9 +411,11 @@ hist_lanzamientos <- vector("list")
 
 
 #### Ejemplo partida####
+
 lanz_ultimo <- lanzamiento_rand()
 hist_lanzamientos[[1]] <- lanz_ultimo
 alcance_pregunta <- readline(prompt = "¿Enemigo alcanzado? ")
+##CANCELA EL BUCLE ANTES DE VOLVER A TOCAR ARRIBA O CRASHEA. NO IR MUY RÁPIDO PULSANDO#######
 for(i in 2:60) {
 readline(prompt = "Pulsa cualquier tecla para empezar tu turno ")
 lanz_ultimo <- lanzamiento()
