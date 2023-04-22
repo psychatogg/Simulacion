@@ -71,7 +71,7 @@ jugadas[[40]] <- c(5,5)  # mala jugada
 
 
 ## Defino vector indicando cuáles son buenas
-buena_jugada <- unlist(lapply(jugadas, function(x) ifelse(x[1] == 6 | x[1] == 10 | x[2] == 5 | x[2] == 9, 0, 1)))
+buena_jugada <- c(1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0)
 
 
 
@@ -104,40 +104,40 @@ training_data_11 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[1
 training_data_12 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[10:18],jugadas_y = jugadas_y[10:18], buena_jugada = buena_jugada[10:18])
 training_data_13 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[19:27],jugadas_y = jugadas_y[19:27], buena_jugada = buena_jugada[19:27])
 training_data_14 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[28:36],jugadas_y = jugadas_y[28:36], buena_jugada = buena_jugada[28:36])
-#####Training##############################
+#####Training con esas jugadas y posiciones##############################
 
 nn_11 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
-								hidden = 40,
+								hidden = 20,
 								data = training_data_11,
-								algorithm = "backprop",
+								algorithm = "sag",
 								learningrate = 0.001,
 								act.fct="logistic",
-								rep =10)
+								rep =30)
 
 
 nn_12 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
-									 training_data_12, hidden = 40,
+									 training_data_12, hidden = 20,
 									 startweights = nn_11$weights,
-									 algorithm = "backprop",
+									 algorithm = "sag",
 									 learningrate = 0.001,
 									 act.fct="logistic",
-									 rep =10)
+									 rep =30)
 
 nn_13 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
-									 training_data_13, hidden = 40,
+									 training_data_13, hidden = 20,
 									 startweights = nn_12$weights,
-									 algorithm = "backprop",
+									 algorithm = "sag",
 									 learningrate = 0.001,
 									 act.fct="logistic",
-									 rep =10)
+									 rep =30)
 
 nn_14 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
-									 training_data_14, hidden = 40,
+									 training_data_14, hidden = 20,
 									 startweights = nn_13$weights,
-									 algorithm = "backprop",
+									 algorithm = "sag",
 									 learningrate = 0.001,
 									 act.fct="logistic",
-									 rep =10)
+									 rep =30)
 
 
 
@@ -263,7 +263,12 @@ jugadas[[70]] <- c(1,2) # buena jugada
 jugadas[[71]] <- c(2,8) # mala jugada
 jugadas[[72]] <- c(3,10) # buena jugada
 
-buena_jugada <- c(1,0,1,0,1,0,1,1,1,0,1,0,0,1,0,0,0,1,0,1,0,0,1,1,1,0,1,0,1,1,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,0,0,0,1,0,1,0,0,1,0,0,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1)
+buena_jugada <- c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1)
+									
+									
+									
+									
+
 									
 									
 
@@ -297,22 +302,22 @@ test_data_2 <- data.frame(posiciones_x,posiciones_y,jugadas_x = jugadas_x[49:72]
 #####Training##############################
 
 nn_21 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
-									 hidden = 40,
+									 hidden = 20,
 									 startweights = nn_13$weights,
 									 data = training_data_21,
-									 algorithm = "backprop",
+									 algorithm = "sag",
 									 learningrate = 0.001,
 									 act.fct="logistic",
-									 rep =10)
+									 rep =30)
 
 nn_22 <- neuralnet(buena_jugada ~ posiciones_x +posiciones_y+jugadas_x+jugadas_y,
-									 hidden = 40,
+									 hidden = 20,
 									 startweights = nn_21$weights,
 									 data = training_data_22,
 									 algorithm = "backprop",
 									 learningrate = 0.001,
 									 act.fct="logistic",
-									 rep =10)
+									 rep =30)
 
 
 
@@ -321,9 +326,37 @@ res2_training <- predict(nn_22, training_data_22,type="class")
 mse_training2 <- (sum(buena_jugada[25:48] - res2_training)^2)/length(res2_training)
 mse_training2
 
+##### TESTING###########################################
 res2_test <- predict(nn_22, test_data_2,type="class")
 mse_test2 <- (sum(buena_jugada[49:72] - res2_test)^2)/length(res2_test)
 mse_test2
 
 cbind(res2_training,buena_jugada[25:48])
 cbind(res2_test,buena_jugada[49:72])
+
+
+
+##################################################
+###### Toma 24 blancos aleatorios y pide que los evalúe la red############
+x <- 1:10
+commander_table<- data.frame(posiciones_x=0,posiciones_y=0,jugadas_x =0,jugadas_y=0)
+for(i in 1:24) {
+	commander_table[i,1] <- sample(x,1)
+	commander_table[i,2] <- sample(x,1)
+	commander_table[i,3] <- commander_table[i,1]
+	commander_table[i,4] <- commander_table[i,2]
+	
+}
+dec_matrix <-predict(nn_22, commander_table[],type="class")
+dif <- vector("integer",length=length(dec_matrix))
+dec_matrix <- cbind(commander_table[,3:4],dec_matrix,dif)
+
+
+## Calcula la distancia respecto a 1 (buena jugada)
+for (i in 1:nrow(dec_matrix)) {
+	dec_matrix[i,4] <- abs(1-(abs(dec_matrix[i,3])))
+}
+## el blanco seleccionado es el que tenga menor diferencia respecto a 1
+blanco <- dec_matrix[which.min(dec_matrix$dif), ]
+blanco <- as.integer(blanco[1,1:2])
+
