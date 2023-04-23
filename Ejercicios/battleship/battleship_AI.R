@@ -429,7 +429,7 @@ hist_lanzamientos <- vector("list")
 
 
 
-#### Ejemplo partida####
+#### Ejemplo partida. Esto habría que ponerlo en una sesión, y en otra el sistema de defensa####
 
 lanz_ultimo <- lanzamiento_rand()
 hist_lanzamientos[[1]] <- lanz_ultimo
