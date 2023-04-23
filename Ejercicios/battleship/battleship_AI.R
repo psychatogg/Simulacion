@@ -354,20 +354,21 @@ lanzamiento_rand <- function() {
 
 
 lanzamiento <- function() {
+	randomgen <- runif(1,0,1)
 	if (alcance_pregunta == 0){
 		rango_x = 1:10
 		rango_y = 1:10
 	} else {
 		## 2 tipos de exploraciones alrededor del punto, posteriormente asistida por la IA
-		randomgen <- runif(1,0,1)
 		if (randomgen<0.5) {
-		rango_x = c(seq(lanz_ultimo[1]-3, lanz_ultimo[1] - 1),seq(lanz_ultimo[1]+1, lanz_ultimo[1] +3))
+		rango_x = c(seq(lanz_ultimo[1]-4, lanz_ultimo[1] - 1),seq(lanz_ultimo[1]+1, lanz_ultimo[1] +4))
 		rango_y = lanz_ultimo[2]
 		} else {
 			rango_x =  lanz_ultimo[1]
-			rango_y = c(seq(lanz_ultimo[2]-3, lanz_ultimo[2] - 1),seq(lanz_ultimo[2]+1, lanz_ultimo[2] +3))
+			rango_y = c(seq(lanz_ultimo[2]-4, lanz_ultimo[2] - 1),seq(lanz_ultimo[2]+1, lanz_ultimo[2] +4))
 		}
 	}
+	## Genera 24 combinaciones posibles dentro del rango estipulado
 commander_table<- data.frame(posiciones_x=0,posiciones_y=0,jugadas_x =0,jugadas_y=0)
 for(i in 1:24) {
 	commander_table[i,1] <- sample(rango_x,1)
@@ -376,6 +377,7 @@ for(i in 1:24) {
 	commander_table[i,4] <- commander_table[i,2]
 	
 }
+## Consulta con la red
 dec_matrix <-predict(nn_22, commander_table[],type="class")
 dif <- vector("integer",length=length(dec_matrix))
 dec_matrix <- cbind(commander_table[,3:4],dec_matrix,dif)
@@ -388,7 +390,23 @@ for (i in 1:nrow(dec_matrix)) {
 ## el blanco seleccionado es el que tenga menor diferencia respecto a 1
 blanco <- dec_matrix[which.min(dec_matrix$dif), ]
 blanco <- as.integer(blanco[1,1:2])
-beep(7)
+######Evitar repetidos, coge el 2º menor. Si este también está, random####
+if((any(sapply(hist_lanzamientos, identical, blanco)))) {
+	blanco_2 <- dec_matrix[which.min(dec_matrix$dif != min(dec_matrix$dif)), ]
+	blanco_2 <- as.integer(blanco_2[1,1:2])
+	if ((any(sapply(hist_lanzamientos, identical, blanco_2)))) {
+		blanco <- dec_matrix[sample(nrow(dec_matrix)),1:2]
+		blanco <- as.integer(blanco[1,1:2])
+	} else {
+		blanco <- blanco_2
+	}
+	
+} 
+
+
+
+
+
 ##### Corrección de rango #####
 if(blanco[1] <= 0) {
 	blanco[1] <- 1
@@ -401,6 +419,7 @@ if(blanco[2] <= 0) {
 } else if(blanco[2] >= 11) {
 	blanco[2] <- 10
 }
+beep(7)
 print(blanco)
 return(blanco)
 }
@@ -422,3 +441,4 @@ lanz_ultimo <- lanzamiento()
 hist_lanzamientos[[i]] <- lanz_ultimo
 alcance_pregunta <- readline(prompt = "¿Enemigo alcanzado? ")
 }
+beep(3)
