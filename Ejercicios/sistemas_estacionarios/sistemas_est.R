@@ -32,6 +32,30 @@ print(MSE)
 
 
 ## 3
+pred_lis <- vector("list",441)
+rowcol <- as.character(seq(0,2,0.1))
+MSE_mat <- matrix(ncol=21,nrow=21)
+colnames(MSE_mat) <- rowcol
+rownames(MSE_mat) <- rowcol
+a <- 1
+	for (i in seq(0, 2, by=0.1)) {
+		for (j in seq(0, 2, by=0.1)) {
+			pred <- sis(n1,n2,n3,v1,v2,v3,p1,p2,p3,i,j)
+			pred_lis[[a]] <- pred
+			MSE_mat[i*10+1,j*10+1] <- 1/n * (sum(y-pred_lis[[a]])^2)
+			a <- a+1
+		}
+	}
+
+
+ind_min <- which(MSE_mat == min(MSE_mat), arr.ind = TRUE)
+
+mejor_beta_COG <- rownames(MSE_df)[ind_min[1]]
+mejor_beta_fp<- colnames(MSE_df)[ind_min[2]]
+		
+cat("Mejor beta_COG: ", mejor_beta_COG, "\n")
+cat("Mejor beta_fp: ", mejor_beta_fp, "\n")
+
 
 
 
