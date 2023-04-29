@@ -57,6 +57,19 @@ cat("Mejor beta_COG: ", mejor_beta_COG, "\n")
 cat("Mejor beta_fp: ", mejor_beta_fp, "\n")
 
 
+## 5
+sis_vec <- function(n1, n2, n3, v1, v2, v3, p1, p2, p3, beta_COG, beta_fp) {
+	X <- rbind(c(n1), c(n2), c(n3), c(v1), c(v2), c(v3), c(p1), c(p2), c(p3))
+	B <- matrix(c(beta_COG, beta_fp), nrow = 2, ncol = 1)
+	COG <- 1.2 * X[1:3,] + 0.5 * X[4:6,]
+	INT <- t(B) * COG + beta_fp * X[7:9,]
+  y_prime <- 1 / (1 + exp(-INT))
+  return(y_prime)
+}
+
+
+
+pred <- sis(n1,n2,n3,v1,v2,v3,p1,p2,p3,beta_COG,beta_fp)
 
 
 
