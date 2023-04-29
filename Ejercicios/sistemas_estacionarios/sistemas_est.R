@@ -50,8 +50,8 @@ a <- 1
 
 ind_min <- which(MSE_mat == min(MSE_mat), arr.ind = TRUE)
 
-mejor_beta_COG <- rownames(MSE_df)[ind_min[1]]
-mejor_beta_fp<- colnames(MSE_df)[ind_min[2]]
+mejor_beta_COG <- rownames(MSE_mat)[ind_min[1]]
+mejor_beta_fp<- colnames(MSE_mat)[ind_min[2]]
 		
 cat("Mejor beta_COG: ", mejor_beta_COG, "\n")
 cat("Mejor beta_fp: ", mejor_beta_fp, "\n")
