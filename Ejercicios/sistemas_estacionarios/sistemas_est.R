@@ -26,8 +26,8 @@ pred <- sis(n1,n2,n3,v1,v2,v3,p1,p2,p3,beta_COG,beta_fp)
 
 
 ## 2
-n <- length(datos$y)
-MSE <- 1/n * (sum(y-pred)^2)
+
+MSE <-  mean((y-pred)^2)
 print(MSE)
 
 
@@ -42,7 +42,7 @@ a <- 1
 		for (j in seq(0, 2, by=0.1)) {
 			pred <- sis(n1,n2,n3,v1,v2,v3,p1,p2,p3,i,j)
 			pred_lis[[a]] <- pred
-			MSE_mat[i*10+1,j*10+1] <- 1/n * (sum(y-pred_lis[[a]])^2)
+			MSE_mat[i*10+1,j*10+1] <- mean((y-pred_lis[[a]])^2)
 			a <- a+1
 		}
 	}
