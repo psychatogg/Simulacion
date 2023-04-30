@@ -69,7 +69,8 @@ sis_vec <- function(n1, n2, n3, v1, v2, v3, p1, p2, p3, beta_COG, beta_fp) {
 
 
 
-pred <- sis(n1,n2,n3,v1,v2,v3,p1,p2,p3,beta_COG,beta_fp)
+
+pred <- sis_vec(n1,n2,n3,v1,v2,v3,p1,p2,p3,beta_COG,beta_fp)
 
 
 
